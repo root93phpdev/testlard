@@ -5,6 +5,8 @@ if($_POST['delid'] == ""){
 } else {    
     $sql = 'DELETE FROM `comment` WHERE `id`='.$_POST['delid'];
     $result = mysqli_query($link, $sql);
+    $sql1 = 'DELETE FROM `subcomment` WHERE `idcomment`='.$_POST['delid'];
+    $result1 = mysqli_query($link, $sql1);
     if (mysqli_connect_errno()) {
         printf("Connect failed: %s\n", mysqli_connect_error());
         exit();

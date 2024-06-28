@@ -41,7 +41,7 @@ include("connect.php");
 </div>
 <button type="button" class="btn btn-primary btn-sm" onclick=addatabase()>Добавить комментарий <span id="btnspin"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i></span></button><br>
 &nbsp;<span id="blockinfo"></span>
-<hr class="col-4 my-4">  
+
  <?php
  $sql = 'SELECT * FROM `comment` ORDER BY id DESC';
 
@@ -49,17 +49,39 @@ include("connect.php");
  $rownum = mysqli_num_rows($result);
     if ( $rownum > 0){
         while ($rezonpage = mysqli_fetch_array($result)){
-echo '<div class="bd-example">
+echo '<hr class="col-4 my-4"><div class="bd-example">
 <ul class="list-group">
   <li class="list-group-item active"><img src="avatar.png"> &nbsp;&nbsp;&nbsp;'.$rezonpage['name'].' - '.$rezonpage['datetime'].'<span style="float: right;"><i class="fa fa-pencil-square" style="cursor:pointer;" aria-hidden="true"></i> | <i class="fa fa-window-close" onclick = deletecomment('.$rezonpage['id'].') style="cursor:pointer;" aria-hidden="true"></i></span></li>
-  <li class="list-group-item">'.$rezonpage['text'].'</li>
-  <li class="list-group-item">
-  <span style="float: right;"><button type="button" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Ответить</button></span>
-  </li>
+  <li class="list-group-item">'.$rezonpage['text'].'</li>';
+    $subsql = 'SELECT * FROM `subcomment` WHERE `idcomment`='.$rezonpage['id'];
+    $subresult = mysqli_query($link, $subsql);
+    $subrownum = mysqli_num_rows($subresult);
+    if ($subrownum >= 10){
+      echo '<li class="list-group-item">
+      <span style="float: right;">Ответ не доступен. Максимум 10.</span>
+      </li>';
+    } else {
+      echo '<li class="list-group-item">
+      <span style="float: right;"><button type="button" class="btn btn-primary" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Ответить</button></span>
+      </li>';
+    }
+    if ($subrownum > 0){
+      while ($subrezonpage = mysqli_fetch_array($subresult)){
+        echo '<li class="list-group-item">
+        <ul class="list-group"> 
+            <li class="list-group-item active">Ответ на комментарий: '.$subrezonpage['name'].' '.$subrezonpage['datetime'].'</li>
+            <li class="list-group-item">'.$subrezonpage['text'].'</li>
+        </ul>
+ </li>';
+      }
+    }
+
+  echo '
 </ul>
 </div>
             ';
-        }
+  }
+        
     } else {
         echo '
         <div class="alert alert-primary" role="alert">К сожалению ни кто не оставил комментарий. Будь первым!</div>';
